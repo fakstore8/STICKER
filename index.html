@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAIN.ID Sticker Maker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #2c3e50;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .credit {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .credit a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .panel h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .font-control {
+            margin-bottom: 30px;
+        }
+
+        .font-control label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .font-control input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .font-control input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        .words-container {
+            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .word-item {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .word-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .word-header span {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #ff5252;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            transition: border 0.3s;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .color-label {
+            display: block;
+            font-size: 0.85rem;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .color-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .color-btn.active {
+            border-color: #2c3e50;
+            transform: scale(1.15);
+        }
+
+        .add-word-btn {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .add-word-btn:hover {
+            background: #5568d3;
+        }
+
+        .preview-area {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 40px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .preview-content {
+            text-align: center;
+            max-width: 500px;
+            line-height: 1.5;
+        }
+
+        .preview-word {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin: 4px;
+        }
+
+        .download-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .download-btn {
+            padding: 15px 10px;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .download-png {
+            background: #51cf66;
+        }
+
+        .download-png:hover {
+            background: #40c057;
+        }
+
+        .download-webp {
+            background: #25D366;
+        }
+
+        .download-webp:hover {
+            background: #1fb855;
+        }
+
+        .share-wa {
+            background: #128C7E;
+        }
+
+        .share-wa:hover {
+            background: #075E54;
+        }
+
+        .download-info {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        .watermark {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #0c5ba0;
+        }
+
+        canvas {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .download-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>MAIN.ID STICKER MAKER</h1>
+            <p>Buat sticker teks dengan highlight warna!</p>
+            <div class="credit">Created by <a href="https://instagram.com/_fuckhry" target="_blank">@_fuckhry</a></div>
+        </div>
+
+        <div class="main-content">
+            <!-- Editor Panel -->
+            <div class="panel">
+                <h2>📝 Edit Teks</h2>
+
+                <div class="font-control">
+                    <label>Ukuran Font: <span id="fontSizeValue">48</span>px</label>
+                    <input type="range" id="fontSize" min="24" max="72" value="48">
+                </div>
+
+                <div class="words-container" id="wordsContainer"></div>
+
+                <button class="add-word-btn" onclick="addWord()">
+                    ➕ Tambah Kata
+                </button>
+            </div>
+
+            <!-- Preview Panel -->
+            <div class="panel">
+                <h2>👁️ Preview</h2>
+
+                <div class="info-box">
+                    💡 <strong>Tips:</strong> Gunakan tombol "Share ke WA" untuk langsung share sticker ke WhatsApp!
+                </div>
+
+                <div class="preview-area">
+                    <div class="preview-content" id="previewContent"></div>
+                </div>
+
+                <div class="download-buttons">
+                    <button class="download-btn download-png" onclick="downloadSticker('png')">
+                        ⬇️ PNG
+                    </button>
+                    <button class="download-btn download-webp" onclick="downloadSticker('webp')">
+                        💾 WebP
+                    </button>
+                    <button class="download-btn share-wa" onclick="shareToWhatsApp()">
+                        📱 Share ke WA
+                    </button>
+                </div>
+
+                <p class="download-info">PNG/WebP untuk download | Share langsung ke WhatsApp</p>
+
+                <div class="watermark">
+                    Created by @_fuckhry
+                </div>
+            </div>
+        </div>
+
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <script>
+        const colors = ['#ffb3ba', '#bae1ff', '#ffffba', '#baffc9', '#e0bbff', '#ffd8b3'];
+        
+        let words = [
+            { text: 'lebih', color: '#ffb3ba' },
+            { text: 'baik', color: '#ffb3ba' },
+            { text: 'sendiri', color: '#ffb3ba' },
+            { text: 'daripada', color: '#bae1ff' },
+            { text: 'tersakiti', color: '#bae1ff' }
+        ];
+
+        let fontSize = 48;
+
+        function init() {
+            document.getElementById('fontSize').addEventListener('input', function(e) {
+                fontSize = parseInt(e.target.value);
+                document.getElementById('fontSizeValue').textContent = fontSize;
+                updatePreview();
+            });
+
+            renderWords();
+            updatePreview();
+        }
+
+        function renderWords() {
+            const container = document.getElementById('wordsContainer');
+            container.innerHTML = '';
+
+            words.forEach((word, index) => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = 'word-item';
+                wordDiv.innerHTML = `
+                    <div class="word-header">
+                        <span>Kata ${index + 1}</span>
+                        ${words.length > 1 ? `<button class="delete-btn" onclick="deleteWord(${index})">🗑️ Hapus</button>` : ''}
+                    </div>
+                    <input type="text" class="text-input" value="${word.text}" 
+                           onchange="updateWordText(${index}, this.value)" 
+                           placeholder="Masukkan kata...">
+                    <span class="color-label">Warna Highlight:</span>
+                    <div class="color-palette">
+                        ${colors.map(color => `
+                            <button class="color-btn ${word.color === color ? 'active' : ''}" 
+                                    style="background-color: ${color}"
+                                    onclick="updateWordColor(${index}, '${color}')"></button>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(wordDiv);
+            });
+        }
+
+        function updateWordText(index, text) {
+            words[index].text = text;
+            updatePreview();
+        }
+
+        function updateWordColor(index, color) {
+            words[index].color = color;
+            renderWords();
+            updatePreview();
+        }
+
+        function addWord() {
+            words.push({ text: 'kata', color: colors[0] });
+            renderWords();
+            updatePreview();
+        }
+
+        function deleteWord(index) {
+            if (words.length > 1) {
+                words.splice(index, 1);
+                renderWords();
+                updatePreview();
+            }
+        }
+
+        function updatePreview() {
+            const preview = document.getElementById('previewContent');
+            preview.innerHTML = '';
+
+            words.forEach(word => {
+                const wordSpan = document.createElement('span');
+                wordSpan.className = 'preview-word';
+                wordSpan.textContent = word.text || 'kosong';
+                wordSpan.style.backgroundColor = word.color;
+                wordSpan.style.fontSize = fontSize + 'px';
+                
+                preview.appendChild(wordSpan);
+                preview.appendChild(document.createTextNode(' '));
+            });
+        }
+
+        function generateStickerCanvas(includeWatermark = true) {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Set font
+            ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+            
+            // Calculate dimensions
+            const padding = 60;
+            const spaceBetween = 10;
+            const highlightPadding = 12;
+            const highlightHeight = fontSize * 1.2;
+            const watermarkHeight = includeWatermark ? 30 : 0;
+            const watermarkGap = includeWatermark ? 20 : 0;
+            
+            // Calculate total width needed
+            let totalWidth = padding * 2;
+            const wordWidths = [];
+            
+            words.forEach(word => {
+                const metrics = ctx.measureText(word.text);
+                const wordWidth = metrics.width + (highlightPadding * 2) + spaceBetween;
+                wordWidths.push(wordWidth);
+                totalWidth += wordWidth;
+            });
+            
+            const canvasWidth = Math.max(totalWidth, 600);
+            const canvasHeight = highlightHeight + (padding * 2) + watermarkHeight + watermarkGap;
+            
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+
+            // Transparent background
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+            // Redraw font after canvas resize
+            ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+            ctx.textBaseline = 'top';
+
+            // Calculate starting X to center content
+            const contentWidth = totalWidth - (padding * 2);
+            let currentX = (canvasWidth - contentWidth) / 2;
+            const y = padding;
+
+            // Draw each word
+            words.forEach((word, index) => {
+                const metrics = ctx.measureText(word.text);
+                const textWidth = metrics.width;
+
+                // Draw highlight background
+                const highlightY = y - (highlightHeight - fontSize) / 2;
+                
+                ctx.fillStyle = word.color;
+                ctx.beginPath();
+                ctx.roundRect(
+                    currentX,
+                    highlightY,
+                    textWidth + (highlightPadding * 2),
+                    highlightHeight,
+                    highlightHeight / 2
+                );
+                ctx.fill();
+
+                // Draw text
+                ctx.fillStyle = '#000000';
+                ctx.fillText(word.text, currentX + highlightPadding, y);
+                
+                currentX += textWidth + (highlightPadding * 2) + spaceBetween;
+            });
+
+            // Add watermark if requested
+            if (includeWatermark) {
+                const watermarkY = canvasHeight - watermarkHeight - 10;
+                ctx.font = '14px Arial, sans-serif';
+                ctx.fillStyle = '#888888';
+                ctx.textAlign = 'center';
+                ctx.fillText('Created by @_fuckhry', canvasWidth / 2, watermarkY);
+            }
+
+            return canvas;
+        }
+
+        function downloadSticker(format = 'png') {
+            const canvas = generateStickerCanvas(true);
+            
+            const mimeType = format === 'webp' ? 'image/webp' : 'image/png';
+            const extension = format === 'webp' ? 'webp' : 'png';
+            
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = `sticker-${Date.now()}.${extension}`;
+                link.href = url;
+                link.click();
+                URL.revokeObjectURL(url);
+            }, mimeType, 0.95);
+        }
+
+        function shareToWhatsApp() {
+            const canvas = generateStickerCanvas(true);
+            
+            canvas.toBlob((blob) => {
+                // Create a File object from the blob
+                const file = new File([blob], 'sticker.png', { type: 'image/png' });
+                
+                // Check if Web Share API is available
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    navigator.share({
+                        files: [file],
+                        title: 'Sticker',
+                        text: 'Check out this sticker! Created by @_fuckhry'
+                    })
+                    .then(() => console.log('Share berhasil!'))
+                    .catch((error) => {
+                        console.log('Error sharing:', error);
+                        fallbackShare(blob);
+                    });
+                } else {
+                    // Fallback: download then guide user
+                    fallbackShare(blob);
+                }
+            }, 'image/png', 0.95);
+        }
+
+        function fallbackShare(blob) {
+            // Download the file first
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = `sticker-${Date.now()}.png`;
+            link.href = url;
+            link.click();
+            URL.revokeObjectURL(url);
+            
+            // Show instructions
+            setTimeout(() => {
+                alert('✅ Sticker berhasil didownload!\n\n📱 Cara share ke WhatsApp:\n\n' +
+                      '1. Buka WhatsApp\n' +
+                      '2. Pilih chat/grup\n' +
+                      '3. Klik ikon attachment (📎)\n' +
+                      '4. Pilih "Gallery" atau "Galeri"\n' +
+                      '5. Pilih gambar sticker yang baru didownload\n' +
+                      '6. Kirim! 🎉\n\n' +
+                      'Atau gunakan aplikasi "Sticker Maker" untuk menambahkan ke WhatsApp sticker pack!');
+            }, 500);
+        }
+
+        // Initialize on page load
+        init();
+    </script>
+</body>
+</html>
